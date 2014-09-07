@@ -1,0 +1,46 @@
+#lang.yml file example
+#
+#  This is an example of a lang.yml file. ZamaPlugins natively support and automatically load lang.yml files
+# when they enable, taking the language configuration and constructing a series of ZamaMessage instances which
+# can then be tied into the Zama messaging system. Using this system, there is no need to interact with
+# Bukkit directly to send messages, and messages can be easily edited, translated, and added on the fly without
+# adding String literals to the code or editing existing ones.
+#
+#  A lang.yml file can be used by following the examples in this file and making a lang.yml file in a plugin's jar, in the
+# same place as a config.yml is or would be. The lang.yml file mirrors Bukkit's config.yml handling. It will
+# automatically save the default file from the jar to the plugin's folder if none was already found, and then load
+# the messages in that file. Using the headers of each message, messages can then be accessed from
+# the ZamaPlugin's main class using <plugin instance>.getLanguageSettings().getZamaMessage(name)
+#
+#  The messages in this file can be further customized for specific contexts by creating variable versions of them,
+# calling createVariableVersion() on the source instance. Using variable versions, it is possible to replace a
+# String with a context-specific String defined by the runtime conditions of the plugin, like replacing what was 
+# written as in this file as %player% with a player's actual name.
+#
+#  A message is then sent by calling the event using Bukkit.getServer().getPluginManager().callEvent(MessageSendEvent event). 
+# Not only does this system allow for easily multi-lingual messages whose correct version Zama will send to players based on their
+# preferred language, but it will also allow usage of Zama's message timing and optionally send messages across the network
+# to other bukkit servers.
+#
+#
+messages:
+    #
+    # This header is the "name" of the message, how it can be accessed from the collection via the API.
+    #
+    default-invalid:
+        versions:
+            #
+            #  These keys will define what version the following String corresponds with.
+            # and must match the enum names of the languages, which are  the English versions
+            # of the languages' names.
+            #
+            english: 'Invalid selection.'
+        # 
+        #  The default is what version will be displayed to a player either if the plugin does not specify a language,
+        # or no version is found for their preferred language. It must match one of the configured versions' keys.
+        # 
+        default: english
+    message2:
+        versions:
+            english: '%player% triggered this message'
+        default: english

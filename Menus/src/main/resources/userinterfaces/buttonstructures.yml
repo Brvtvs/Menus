@@ -1,0 +1,163 @@
+
+# configure any structures. Instead just delete any structure entries.
+structures:
+    #The name of the structure. This is used to access the structure from
+    # the configuration and must be unique.
+    structure1:
+        #The spawnpoint used to relocate players to this structure, and 
+        # as a general point of reference. Also defines the world of the
+        # structure.
+        #Syntax: <world>,<x>,<y>,<z>,<yaw>,<pitch>
+        spawnpoint: 'world,5.5,65,10.5,180,0.5'
+        #Copies of this structure.
+        copies:
+            #This structure is copying structure1, adding 100 to the x coordinate
+            # and putting it in a different world. This is the name of the copy
+            # used to access the copy from the config and should be unique
+            structure1-2:
+                #The new spawnpoint. The copy of the structure will be in the same
+                # relative position to this spawnpoint as the original is to its 
+                # spawnpoint.
+                spawnpoint: 'hub,105,65,10,180,0.5'
+        #The substructure that displays and represents the title. Will be 
+        # in its 'on' state whenever any options are displayed.
+        title:
+            #The sign which will display the title message and can be 
+            # interacted with for details. Must actually exist in the
+            # minecraft world as a sign, unlike most of these blocks
+            # which can be totally faked.
+            sign:
+                on:
+                    #The type of block that should appear in this
+                    # sign's 'on' state. Must be a type of sign.
+                    material: WALL_SIGN
+                    #The simple byte data value the block should have. Not
+                    # necessary unless you want to define a specific value. 
+                    # If it is not present, '0' is assumed.
+                    data: 5
+                off:
+                    #The type of block that should appear in this sign's
+                    # 'off' state.
+                    material: AIR
+                #where this block is. Syntax: "<x>,<y>,<z>"
+                location: '10,66,10'
+            #Other blocks whose appearance will change with the title 
+            # structure, but serve no interactive purpose (for show).
+            # Do not have to actually exist in the minecraft world.
+            blocks:
+                '1':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,10'
+                '2':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,10'
+        #The substructures that display the current options of the menu
+        # interface, and have the button that, when pressed, will make
+        # the corresponding selection.
+        #These options are used IN THE ORDER THEY ARE DEFINED by the menu.
+        # If you want to have them to be used in a non-linear order, 
+        # define them non-linearly.
+        options:
+            '1':
+                #The sign block that displays the option information,
+                # similar to the title sign.
+                sign:
+                    on:
+                        material: WALL_SIGN
+                        data: 5
+                    off:
+                        material: AIR
+                    location: '10,66,9'
+                #The button that the player has to interact with to 
+                # select the option this structure represents. Must 
+                # actually exist in the minecraft world as a button.
+                button:
+                    on:
+                        material: WOOD_BUTTON
+                        data: 7
+                    off:
+                        material: AIR
+                    location: '10,65,9'
+                #The other blocks in the structure that will be 
+                # toggled 'on'/'off' with the interactive sign and
+                # button. Do not have to actually exist in the 
+                # minecraft world. The interactive button and sign 
+                # for this option should NOT be defined here.
+                blocks:
+                    '1':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,66,9'
+                    '2':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,65,9'
+        
+
+
+    structure2:
+        spawnpoint: 'world,5,65,100'
+        title:
+            sign:
+                on:
+                    material: WALL_SIGN
+                    data: 5
+                off:
+                    material: AIR
+                location: '10,66,100'
+            blocks:
+                '1':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,100'
+                '2':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,100'
+        options:
+            '1':
+                sign:
+                    on:
+                        material: WALL_SIGN
+                        data: 5
+                    off:
+                        material: AIR
+                    location: '10,66,99'
+                button:
+                    on:
+                        material: WOOD_BUTTON
+                        data: 7
+                    off:
+                        material: AIR
+                    location: 'w10,65,99'
+                blocks:
+                    '1':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,66,99'
+                    '2':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,65,99'
+        
+        
+        
+        

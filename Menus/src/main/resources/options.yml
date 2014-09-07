@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------
+#                                                                        |
+#   options.yml - A file to define all of the possible menu options. By  |
+# defining them here, and with a unique name that can be used to access  |
+# them quickly and easily, the use of options can be very flexible,      |
+# allowing a single option to be used in multiple places in multiple     |
+# underlays of multiple types. Key-based option-object access reduces    |
+# duplication and makes editing much easier.                             |
+#                                                                        |
+#   The following are examples of possible option definitions, with the  |
+# fields and structure explained in comments.                            |
+#                                                                        |
+#-------------------------------------------------------------------------
+
+#Do not remove this file or the 'options' header, even if you do not want to
+# configure any options. Instead just delete any option entries.
+options:
+    #The name of the option. Must be unique, and will be used by listeners 
+    # to access and listen to this option.
+    option1:
+        #The name of the MultilingualMessage (in Menus' lang.yml file) that contains 
+        # the mutilingual name of this option. Menu interfaces often have
+        # very limited text space for names, so a long name is likely to be
+        # truncated.
+        name: opt1name
+        #The name of the MultilingualMessage (in Menus' lang.yml file) that contains 
+        # the multilingual detailed description of this option.
+        description: opt1desc
+    option2:
+        name: opt2name
+        description: opt2desc

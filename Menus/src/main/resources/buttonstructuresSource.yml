@@ -1,0 +1,237 @@
+
+buttonstructures.yml - A file to define button-interaction structures that can be used to display menus through a user interface.
+
+A button-interaction structure is a collection of blocks, together thought of as a 'structure', that can be DYNAMICALLY (per-player) edited to display the contents of a menu for that player. This relies on sending fake block update packets to users to give their client a false perception of the state of the blocks in the structure. 
+
+Each structure is comprised of a set of substructures, each of which either displays the title of the menu, or one of its options. These substructures could also be though of as option/title 'slots' which menus use to display their contents on for the player. Each structure has ONE title slot and an arbitrary positive number of slots (you can define how many slots there are, but if there aren't enough to accommodate a given menu, that will be problematic obviously).
+
+Ignoring the special title slot for now, each slot is comprised of a sign that displays the name of an option and a button which the player will use to select that option. Additionally, if the user right-clicks the sign of an option, the detailed description will be sent to them as a chat message. In addition to the sign and button, each structure has an arbitrary positive number of other blocks that will be turned 'on' and 'off' with the option slot.
+
+Each slot is a substructure, and each substructure has its own 'on' and 'off' status. When an option slot is not in use, it is turned off. When it is in use, it is turned 'on'. A  structure will only use as many option slots as it has options to display at a given stage of the menu. So, if the structure has 8 option slots, but there are currently only two options, only two of the option slot substructures will be 'on'. The options slots will be used in the order that they are defined in the configuration. So, if in a situation where only 2/8 slots are being used, and you want the slots to be occupied from left to right, then you should define the slots in this file from left to right.
+
+Each option slot's button and sign block MUST ACTUALLY EXIST AS A BUTTON AND SIGN IN THE MINECRAFT WORLD, respectively. They must also have an 'on' appearance of a type of button and a type of sign, respectively. If they do not, then a player will not be able to interact with the option slot. 
+
+Other than those two blocks, the 'on' and 'off' appearances of the blocks in each substructure can be whatever you want them to be. There is a tremendous amount of flexibility in this. Each option slot could theoretically be a gigantic building that appears/disappears as it comes into/out of use (though that might cause lag). Or, instead of turning blocks to air when they are 'off', you could simply change them to another kind of block. Maybe you go from a vibrant color when 'on' to gray/black when 'off'. There are few limitations, but you should be careful that (a) you make sure the display signs and interaction buttons are actually present as signs and buttons in the minecraft world, and of (b) lagging players' clients, and of (c) hiding blocks that are really there on the server, which may cause issues if it is in a place where the player can walk (if the player's client thinks it can walk through what is a solid block to the server, it might cause unexpected behavior).
+
+Note also that, depending on the behavior of the menus (how/when they are opened/closed), a structure may not always appear to the player as either their 'on' or 'off' state, but instead may appear as their actual state on the server. Keep this in mind when defining structures' 'real', 'on', and 'off' appearances and the behavior of how the menus are opened/closed.
+
+To define a structure, you must list each of the substructures, each of the blocks in the substructures, and the 'on' and 'off' states of each block. Each block must have a defined 'on' and 'off' state and each block can only appear once. Defining a structure, especially a large one, may be complex and time consuming. However, it is possible to copy a new instance of another structure, with its coordinates offset and even in a different world, if desired. By doing this, you can define your very complex 100 block structure, and then have a second version of it 100 blocks to the east without copying, pasting, and editing all of its contents. See below for examples.
+
+Copying is done by spawnpoint. When defining a copied structure, you define its spawnpoint, and its relative position to the original will determine the relative position of the rest of the blocks. Ex: If my new spawnpoint is 100 blocks east of the original spawnpoint's structure, then my new title sturcture would be exactly 100 blocks east of the original as well, and so on. Currently, rotation and other forms of edited copying are not supported.
+
+The following are some simple examples of possible structure definitions and copying, with the specific fields and syntax explained in comments.
+
+
+#TODO make this easier to understand/work with. Make a step-by-step guide to setting these up with thoroughly explained examples, in addition to a
+# structure that has all of the possible elements for examples.
+
+#TODO revise the header guide text
+
+#Do not remove this file or the 'structures' header, even if you do not want to
+# configure any structures. Instead just delete any structure entries.
+structures:
+    #The name of the structure. This is used to access the structure from
+    # the configuration and must be unique.
+    structure1:
+        #The spawnpoint used to relocate players to this structure, and 
+        # as a general point of reference. Also defines the world of the
+        # structure.
+        #Syntax: <world>,<x>,<y>,<z>,<yaw>,<pitch>
+        spawnpoint: 'world,5.5,65,10.5,180,0.5'
+        #Copies of this structure.
+        copies:
+            #This structure is copying structure1, adding 100 to the x coordinate
+            # and putting it in a different world. This is the name of the copy
+            # used to access the copy from the config and should be unique
+            structure1-2:
+                #The new spawnpoint. The copy of the structure will be in the same
+                # relative position to this spawnpoint as the original is to its 
+                # spawnpoint.
+                spawnpoint: 'hub,105,65,10,180,0.5'
+        #The substructure that displays and represents the title. Will be 
+        # in its 'on' state whenever any options are displayed.
+        title:
+            #The format of how titles should appear on signs. Allows you to 
+            # create predefined text on certain lines of the display signs 
+            # such as "Title:" or "Stage:", or just "-------------" for 
+            # aesthetics and/or clarity. 
+            #Not necessary, but recommended. If no predefined lines are defined,
+            # no formatting will be used.
+            #Define only the numbers you wish to predefine, leave the rest out.
+            # Choose from: line1, line2, line3, line4
+            format:
+                #The name of the MultilingualMessage (in Menus' lang.yml file) 
+                # that contains the mutilingual text of the line. Sign lines 
+                # have a max length of 15 characters and any text longer than
+                # that will be truncated.
+                line1: titleline1
+                line4: titleline4
+            #The sign which will display the title message and can be 
+            # interacted with for details. Must actually exist in the
+            # minecraft world as a sign, unlike most of these blocks
+            # which can be totally faked.
+            sign:
+                on:
+                    #The type of block that should appear in this
+                    # sign's 'on' state. Must be a type of sign.
+                    material: WALL_SIGN
+                    #The simple byte data value the block should have. Not
+                    # necessary unless you want to define a specific value. 
+                    # If it is not present, '0' is assumed.
+                    data: 5
+                off:
+                    #The type of block that should appear in this sign's
+                    # 'off' state.
+                    material: AIR
+                #where this block is. Syntax: "<x>,<y>,<z>"
+                location: '10,66,10'
+            #Other blocks whose appearance will change with the title 
+            # structure, but serve no interactive purpose (for show).
+            # Do not have to actually exist in the minecraft world.
+            blocks:
+                '1':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,10'
+                '2':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,10'
+                '3':
+                    on: 
+                        material: AIR
+                    off:
+                        material: SIGN
+                        #This is text that should be on the sign when it is 'off'
+                        # For any 'on' or 'off' appearance that is a type of sign,
+                        # you can define what text should appear on it as well
+                        # by defining some/all of the lines of the sign's text.
+                        # Any line not defined will be empty.
+                        #Note that if the menu using this structure has a 
+                        # specific use for a sign (such as displaying the title
+                        # or an option) any definition like this will be overridden
+                        # for that block while the menu is displaying its text.
+                        text:
+                            #The name of the MultilingualMessage (in Menus' 
+                            # lang.yml file) that contains the mutilingual text 
+                            # of the line. Sign lines have a max length of 15 
+                            # characters and any text longer than that will be 
+                            # truncated.
+                            line1: sign1line1
+                            line2: sign1line2
+                            line4: sign1line4
+                    location: '10,65,10'
+                    
+        #The substructures that display the current options of the menu
+        # interface, and have the button that, when pressed, will make
+        # the corresponding selection.
+        #These options are used IN THE ORDER THEY ARE DEFINED by the menu.
+        # If you want to have them to be used in a non-linear order, 
+        # define them non-linearly.
+        options:
+            #The format of how options should appear on signs. Not necessary, 
+            # but recommended. See the title format above for more details.
+            format:
+                line1: optline1
+                line2: optline2
+            '1':
+                #The sign block that displays the option information,
+                # similar to the title sign.
+                sign:
+                    on:
+                        material: WALL_SIGN
+                        data: 5
+                    off:
+                        material: AIR
+                    location: '10,66,9'
+                #The button that the player has to interact with to 
+                # select the option this structure represents. Must 
+                # actually exist in the minecraft world as a button.
+                button:
+                    on:
+                        material: WOOD_BUTTON
+                        data: 7
+                    off:
+                        material: AIR
+                    location: '10,65,9'
+                #The other blocks in the structure that will be 
+                # toggled 'on'/'off' with the interactive sign and
+                # button. Do not have to actually exist in the 
+                # minecraft world. The interactive button and sign 
+                # for this option should NOT be defined here.
+                blocks:
+                    '1':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,66,9'
+                    '2':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,65,9'
+        
+
+
+    structure2:
+        spawnpoint: 'world,5,65,100'
+        title:
+            sign:
+                on:
+                    material: WALL_SIGN
+                    data: 5
+                off:
+                    material: AIR
+                location: '10,66,100'
+            blocks:
+                '1':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,100'
+                '2':
+                    on:
+                        material: STONE
+                    off: 
+                        material: AIR
+                    location: '9,66,100'
+        options:
+            '1':
+                sign:
+                    on:
+                        material: WALL_SIGN
+                        data: 5
+                    off:
+                        material: AIR
+                    location: '10,66,99'
+                button:
+                    on:
+                        material: WOOD_BUTTON
+                        data: 7
+                    off:
+                        material: AIR
+                    location: 'w10,65,99'
+                blocks:
+                    '1':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,66,99'
+                    '2':
+                        on:
+                            material: STONE
+                        off:
+                            material: AIR
+                        location: '9,65,99'
+        
+        
+        
+        

@@ -1,0 +1,142 @@
+Menus Plugin Overview
+-------------------------------
+
+Menus is a plugin utility/library that is designed to offer an infrastructure through which a client can implement totally multilingual, choice-based user interaction that is both user friendly and potentially complex. It can be used to create extremely intricate behaviors and interactions, as long as they fit into the basic logical framework of a 'Menu'. 
+
+This overview will explain the core logical models used to create and use menus and their user interfaces. If you understand these models, you will understand both the limitations and possibilities of the Menus utility.
+
+**Note that this plugin is not currently in a production-ready state. This project is largely experimental, and has not been polished to its final level.**
+
+
+
+
+Dialogue:
+-------------------------------
+
+Dialogue is the core function of the Menus utility. It is the simple, big-picture, vague description of how Menus interacts with users. Simply put, dialogue is a method of player interaction where Menus presents information to the player, the player responds, Menus presents more information, and so on in a dialogue between software and user.
+
+A dialogue is further split into multiple functional elements such as stages, menus, underlays, and user interfaces, which are explained in detail below.
+
+
+
+
+Menu Stage:
+-------------------------------
+
+Before we look at an actual menu, we first need to look at its simplest component. A menu 'stage' is a choice that the user has to make within the menu. The user is presented with an array of options, and told to choose one of them. The stage given to the user ends when the user makes a single selection and does not change until they do. This is a 'stage'.
+
+Beyond its basic structure and components, the ONLY requirements for a menu stage is that it be unchanging from the time it is presented to user and when they make a choice, and that only one choice can be made. 
+
+A menu stage is the language through which the data structures, menus, and user interfaces of Menus communicate. They are a made-up construct that carry both information about themselves and the capacity to trigger behaviors. They are standardized and stable enough to allow potentially highly varied implementations of each of these models to communicate effectively and almost seamlessly.
+
+Do not worry about fully understanding all of the limitations and possibilities of using menu stages, as most will only become relevant when using complex menu underlays (To see more information on menu stages, see the MENU STAGES CONTINUED section below).
+
+
+
+
+Menu:
+-------------------------------
+
+A menu is a dialogue of stages that repeatedly presents the user with a new choice after each selection, until it reaches a stopping point. The menu presents a stage, the user makes a choice, the menu presents a new stage... and so on until the dialogue reaches an ending point, if it ever does.
+
+In the Menus logical model, a menu is nothing more than that. The dialogue may or may not take the content of the choices into consideration when defining what the next stage will be, but it does not matter from the perspective of the 'menu' in this model. A menu is just a dialogue of stages that the user interacts with.
+
+In more specific terms, a menu traverses some kind of underlying data structure, either realized or virtualized, of possible menu stages, in a per-user way.
+
+
+
+
+Menu Underlay:
+-------------------------------
+
+In the Menus model, a 'menu' does not define what the stages are or how they are structured; this is instead handled by the menu 'underlay'. The underlay gives the menu the stage to present the user, and, when it receives a selection from the user via their menu, defines the next stage. This is the entirety of the logical model: the underlay defines what the stages are in the menu dialogue.
+
+This is a very vague model for what is generally a very complex process. However, this vagueness is the strength of the Menus model overall: it allows for a very broad range of possible implementations of an underlay. 
+
+A very simple underlay would be one that is totally linear, and does not take the user's selections or situation into account at all. For instance, the underlay may just want to know, in each of these sets, which is the user's favorite letter: (A, B, C), (I, J, K), (X, Y, Z). To get this information, a linear underlay could simply ask for the favorite of each of the sets in succession. It would not alter the second stage depending on whether the user picked A, B, or C or alter the third stage depending on whether the user picked I, J, or K.
+
+However, a linear underlay is not very useful and can be easily accomplished without the Menus utility. More importantly, an underlay could be much more complex and rely on the content of the decisions a user makes as they go through the dialogue. For instance, let's say an underlay wants to know the details of what kind of game the user wants to play. Let's say all of the possible options that can be selected are as follows: (Team Death Match, Capture the Flag, One Flag, Two Flags, 25 kills to win, 50 kills to win). If the user selects 'Team Death Match', the flag options no longer make any sense, and a linear or otherwise 'dumb' model that does not take the user's previous choices into account will not be effective.
+
+In order to deal with more complex decisions, we can use models other than a linear underlay, such as a tree underlay. A tree underlay would take this set of options and organize it as follows:
+
+
+                TDM          [Stage 1]          CTF
+              /     \                         /     \
+             /       \                       /       \
+            /         \                     /         \
+       50 kills    25 kills  [Stage 2]  1 flag     2 flags
+          /             \                 /             \
+        end             end             end             end
+
+
+In this tree model, each decision the user makes defines the options that they are given in response; every path down the tree makes sense and maintains logical integrity, provided the tree is sanely constructed. This creates a much more robust set of possibilities for user interaction.
+
+Though there are too many possible models to enumerate them all, I will also touch on the possibility of a 'virtualized' structure, where the full range of possibilities is not explicitly defined. In a 'realized' structure, such as a tree or line, you can see and iterate over every possible outcome; a realized structure could be drawn on paper. In a virtualized structure, the data is generated dynamically from an algorithm or set of data where realization is either unnecessary or infeasible. This is totally possible in the Menus model and potentially very powerful/important for certain types of menus. 
+
+An obvious example of the importance of virtualization would be if you wanted to make use of usernames in options. It would not make sense to list every possible username from 2-16 characters in a stage for the user to select from (which would be much more than trillions of possibilities), and the stages would instead have to be virtualized based on the user's specific situation.
+
+There are many more, more complex, more flexible, more specialized possible models, and any could theoretically be implemented as long as it can be boiled down into a dialogue of menu stages. That is why the vagueness of the underlay model is so useful.
+
+
+
+
+Menu Options and Option Listeners:
+-------------------------------
+
+So far options have been described by what they represent, and their behavior has been described as the underlay 'wanting to know' this information. Of course, this is not how options actually work. Instead, an option is comprised of a few elements: a name, a description, and a set of listeners.
+
+The name of the option is just a string of text that is used when displaying the option to the user. (This is technically not true, because Menus supports multilingualism, and so the text string is actually a collection of different versions of the name in each supported language. However, for a given user, a single text string will be used, whatever version is in their preferred language. See the Zama messaging guide for more details on multilingual messages). It is generally short and concise so that it can fit in many implementations of user interfaces without being truncated beyond recognition.
+
+The description of the option is also just a string of text (still not technically true) that is used in some way when displaying the option to the user. It is generally longer, more detailed, and explains the consequence of choosing a given option.
+
+The name and description provide information on the option and allow the user to know what the choice represents. But, to actually cause the described behavior, the option makes use of a caller/listener system. The option is the caller and tells its listeners every time it is selected by a user. Plugins register themselves as listeners of an option so that they can actually cause the behavior that the option represents. As a listener, the plugin will know every time this option is selected by a user and can use that information to execute the consequences of choosing the option.
+
+Note that a menu does not guarantee any transactional properties. Menus expect to wait indefinitely in between selections from the user. A user could log out in the middle of using a menu, and it is not inherently guaranteed that their progress will be saved or rolled back. This could be an issue in a situation like where a user's decision in stage 1 starts some change that must be completed in stage 3. If they were to log out in stage 2, it could represent a problem. However, transactional properties can be implemented within plugins using Menus through their listeners and own internal logic.
+
+
+
+
+Menu Interface:
+-------------------------------
+
+A menu interface is another very simple and vague model. An interface is something that takes stages, presents them to the user, and gives the user a way to actually trigger their selection. That is the entirety of the logical model for a menu interface.
+
+Just like with underlays, this vagueness is very useful. Any way of presenting the menu dialogue is possible, just as long as it presents all of the options of a stage, displays their name/description, and allows the player to select one of the options through some form of interaction.
+
+Because the contents of a menu stage are somewhat arbitrary, some user interface implementations will work better with the Menus system than others. A name and a description do not represent an inherent logical definition of an 'option', it is just a relatively flexible and informative set of elements that could be accommodated by many possible user interfaces. If you were asked to define an 'option', you would not define it as 'a name and a description'; this is just Menus' way of standardizing them so they are broadly interpretable. 
+
+For example, if the max option name length for user interface X is 16 characters, it would fit better with underlays/options with name lengths under 16 characters. That is somewhat arbitrary and not based on any inherent logical model.
+
+In the minecraft world, some examples of user interfaces might be to have signs that display the options' information and can be clicked to select them. Or, an inventory-menu could be used with each option represented by an item which, when clicked, selects the option. There is no easy way to describe the limits of the menu interface model, all that is required is a way to present the information and a way for the user to select the desired option.
+
+
+
+
+Menu Stage (continued):
+-------------------------------
+
+This section delves more deeply into the logical requirements of a menu stage, and how those requirements can appear to be bypassed to create more flexible menus. It is not essential to understand all aspects of this except as a way to implement more complex types of menus and menus that do not exactly resemble simple menu stages to the user.
+
+A menu stage is made up of a set of options, but is not literally defined as a set of options. Two stages could have the same set of options and appear exactly the same, but would not be considered the same stage.  It is a contract between the underlay, menu, and user interface that allows each part of the dialogue to know that the options it presents to the user are still valid by the time the user makes a selection.It is a choice the user is presented with from a set of options that cannot change between when it is presented to them and when they make the decision. It is a contract between the underlay, menu, and user interface that allows each part of the dialogue to know that the options it presents to the user are still valid by the time the user makes a selection.
+
+From the perspective of a user, the visual and usage effect of the 'stage' model can be blurred or rendered totally imperceptible. For example, if we wanted the user to pick 3 out of 6 options instead of just one, we could have 3 stages in a row that have the same options in each. That would be three stages where the user makes a single selection from an unchanging set of options in each. But, to the user, for all intents and purposes, it would allow them to choose more than one option in a what appears, from their perspective, to be a single, static state of the menu.
+
+Additionally, though a specific stage cannot change over time, the underlay itself can. The end result is that even though stages do not change, the menu dialogue can change over time by just changing the nature of the stage which is presented to the user. A stage is per-user and temporary, and, logically speaking, ceases to exist as soon as the user makes their selection. With menu stages, you could still have a menu that is different between users, and/or different to the same user every time they use it, so long as the options for a specific decision do not change in between when it is presented to the user and when they make a selection.
+
+
+
+
+Review:
+-------------------------------
+
+Here is a quick review of the basics of each construct and some important details.
+
+MENU STAGE: Made up of a title and a set of options. Stages are how underlays, menus, and interfaces communicate information. Per-user and chronologically defined: 'starts' when the user is given the options, 'ends' when they make a choice. Cannot change during that period, does not exist in a logical sense outside of that period.
+
+MENU: A per-user object that traverses some kind of underlying option data structure to present a dialogue (options presented, user responds with choice, repeat) until potentially reaching an end point. Allows for concurrent traversal of an underlay by multiple users, allows for a user-specific dialogue state (especially for a virtualized underlay).
+
+MENU UNDERLAY: Data structure of options that produces stages for a menu to provide to its user. May be simple or complex, realized or virtualized, 'dumb' or context-specific, etc.
+
+MENU OPTION: Stored in menu underlays, call events to their listeners when selected by a user, allowing clients to actually act on menu selections. Also self-documenting with a name and a description required to create an option.
+
+MENU INTERFACE: Some kind of per-user implementation of a way to display the options from a menu dialogue and get a response from the user.

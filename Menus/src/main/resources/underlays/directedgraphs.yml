@@ -1,0 +1,167 @@
+#Do not remove this file or the 'graphs' header, even if you do not want to
+# configure any graphs. Instead just delete any graph entries.
+graphs:
+
+    #The name of the directed graph underlay. Must be unique among ALL underlays 
+    # (not just the ones in this file, if there are other active sources of 
+    # underlays), and is used to access the graph from the menu manager.
+    #The first node defined in the graph is the 'start'. Though a directed graph
+    # that supports cycling may not have a logically inherent head, the first
+    # node defined is the start, and is how the graph as a whole will be 
+    # accessed, and where Menus will generally begin from.
+    graph1:
+        #A unique id for this node. Not necessary, but must be included
+        # and must be unique within this graph in order to reference this 
+        # node from elsewhere in this graph. Cannot be referenced between
+        # graphs. (See graph3 for an example of referencing a node by id)
+        uniqueid: node1
+        #The title of this node, how the choice will be represented to
+        # the user.
+        title:
+            #The name portion of the title. A reference to a multilingual
+            # message defined in the lang.yml file for Menus. (The 
+            # message's name)
+            name: g1n1name
+            #The detailed description portion of the title, a reference to
+            # a multilingual message defined in the lang.yml file for 
+            # Menus.
+            description: g1n1desc
+        #The set of options for this node, with the child node they 
+        # lead to, if any.
+        options:
+            '1':
+                #The name of the option, as it appears in options.yml. 
+                # This will define how this option is displayed in the
+                # menu interface, and what happens when the option is
+                # selected (when its listeners are called and trigger
+                # the behaviors that define the option), in addition 
+                # to sending the menu to its child node.
+                option: opt1
+                #The child of this option, what node it will lead to
+                # when selected, in addition to calling the listeners
+                # of the option.
+                child:
+                    title:
+                        name: g1n2name
+                        description: g1n2desc
+                    uniqueid: t1n2
+                    options:
+                        #An option with no child (an end of the menu)
+                        '1':
+                            option: opt3
+            #This option will end the menu, because it has no child. The 
+            # user will select it, its listeners will be called, and then
+            # the menu will be completed as a result.
+            '2':
+                option: opt2
+
+#-------------------------------------------------------------------------
+#graph1 examined: If we look at graph1, what we have is a menu with 2 
+# options. If you select option 1, you will get a second stage with a 
+# single option. This is a very simplistic, short menu, but it shows how
+# to define the different elements of the graph
+#-------------------------------------------------------------------------
+
+
+
+
+    graph2:
+        title:
+            name: g2name
+            description: g2desc
+        options:
+            '1':
+                option: opt1
+                child: 
+                    title:
+                        name: g2name
+                        description: g2desc
+                    options:
+                        '1':
+                            option: opt1
+                        '2':
+                            option: opt2
+            '2':
+                option: opt2
+                child:
+                    title:
+                        name: g2name
+                        description: g2desc
+                    options:
+                        '1':
+                            option: opt1
+                        '2': 
+                            option: opt2
+
+#-------------------------------------------------------------------------
+#graph2 examined: In this underlay we have two simple stages. At the first 
+# stage, you have two options. If you pick either option, it will present 
+# you with another two options. Note that in this example, options 'opt1' 
+# and 'opt2' are both reused three times each. While this would make for 
+# a strange and unhelpful menu, it is technically totally fine, and 
+# options can be reused as many times as desired. You can repeat options 
+# within the structure as many times as fits your needs, and, theoretically, 
+# we could even go as far as having a menu graph structure with 1000 
+# choices, all of which are represented by the same option, not that
+# that would help in any way. In the same way, the elements of the title
+# are also reused at each node.
+#-------------------------------------------------------------------------
+
+
+
+
+
+    graph3:
+        #Again, this id is used to refer back to this node from 
+        # elsewhere WITHIN this graph. It is optional, but
+        # required in order to make a reference.
+        uniqueid: start
+        title:
+            name: g2name
+            description: g2desc
+        options:
+            '1':
+                option: opt1
+                child: 
+                    title:
+                        name: g2name
+                        description: g2desc
+                    options:
+                        '1':
+                            option: opt1
+                            #An example of how to reference another node. 
+                            # This would take the user back to the node 
+                            # 'start' if they selected 'opt1' in this node
+                            child:
+                                goto: start
+                        '2':
+                            option: opt2
+                            child: 
+                                goto: start
+            '2':
+                option: opt2
+                child:
+                    title:
+                        name: g2name
+                        description: g2desc
+                    options:
+                        '1':
+                            option: opt1
+                            child:
+                                goto: start
+                        '2': 
+                            option: opt2
+                            child:
+                                goto: start
+        
+#-------------------------------------------------------------------------
+#graph3 examined: this graph is identical to graph2, except that at the 
+# end of each path, instead of the menu ending, it uses references to 
+# start over at the beginning. This is a prominent use of node 
+# references, and one that would be otherwise impossible without them. 
+# However, node references have many other possible uses to make defining 
+# graph underlays easier, cleaner, and more powerful. 
+#
+# Remember: references can only work within a graph. A node cannot exist 
+# in two graphs at the same time.
+#-------------------------------------------------------------------------

@@ -1,0 +1,139 @@
+-------- CURRENT TODO: -------- 
+
+DESIGN 
+    ???Add sign 'dialogues', SHOULD THESE BE A PART OF MENUS???? Is this essentially the responsibility of the client? They open and manage menus, Menus is just a library for using them.
+
+
+TEST 
+    Create a more formal test client
+    copying
+    Menu manager api, like accessing players' menus and the menu collection singleton
+    
+    
+IMPLEMENT
+    ???color-codes in signformats (ex: an array of line messages and an array of ChatColors to prepend)
+    |(API implemented) colorschemes
+    |(not configurable yet) colorable options/titles (configurable)
+    |(not configurable yet) itemizable options/titles (configurable)
+    ???Add more menu events like MenuOpenEvent and MenuCloseEvent
+    -Make menu data types add themselves to the central manager whenever possible
+
+POLISH
+    GO BACK OVER AND POLISH/REVISE TESTING CODE. HOLISTIC CODE REVIEW!!!!
+    ?Add declaration for throwing IllegalArgumentException to the objects whose constructors do throw it?
+    clean up dead code (excluded classes, etc.)
+    Remove debug code
+    Move testing code to a testing directory or separate plugin
+    Reconsider, refactor, redesign UI structures after structures are expanded and migrated out of Menus
+
+
+DOCUMENT!
+    Create a client usage guide (how to use listeners, how to create new UIs, how to create new underlays, how to start, end, save, resume, menus)
+    Update structure config file documentation/guide
+    
+    
+MIGRATE
+    Structure features to its own plugin (will need to change the way that pre-built menu structures are constructed, managed, and configured).
+        ???Migrate bowl-utility-item and other structure-definition utilities to the structures plugin.
+    Packet management to its own engine plugin (will need to just migrate references, because the API will not change all that much when moved)
+    Block and sign utilities not directly related to menus to ZamaLib general MC utilities.
+    ???Migrate button and other UI interaction out of menus to its own client plugin.
+    
+
+--------------------------------------------------
+
+
+DESIGN CONCEPTS-----------------------------------
+
+A possible new underlay model:
+- References a start node in a directed graph that does not ensure a one-to-many relationship between the graph and underlay. Allow multiple underlays to have arbitrary starts at different places in the same graph potentially. No requisite association between node and underlay.
+- Contents of the node are hidden and abstracted from the structural element. Allow for API-based MenuStage production, so that some nodes might be constructed with a virtualized menustage generator, and some might be realized. Could be a very broadly defined type of virtualization, or a set of specific modules like "Display the user's teammates as options". 
+- Incorporate a flexible concept of MenuOptions equaling one another (or something similar), so that one-use, context-sensitive instances can be produced that still allow for selection. (MenuOptions' structure might need to be re-thought... consider abstracting it within the node? Use select(MenuOption option) in Menu rather than getNext()? Let the underlay define what happens with the option?)
+
+?Merge "basis" and main packages and make menu manager singleton collection
+default access? Do the same with MenuUnderlay, making it an abstract class
+that handles menu collections instead of an interface? Visually simple
+Package organization is probably less important than safe utility design.
+
+-------------------------------------------------------------------------
+
+
+Virtualization?
+    - -Node needs access to the menu, for instance to get the player to 
+    virtualize around.
+    - ?Have a new, virtualized MenuStage constructed for each request?
+    - ?Possibly also then extend MenuOption to have some kind of 
+    location-specific id field that can be used to call the correct listeners?
+    A variable MenuOption would not quite work, because it would not know
+    in what context or when it is being accessed. However, a MenuOption that can
+    be identified as the product of a variable source option, and trigger
+    the listeners of that source option could work.
+    - Possibly an underlay implementation that blends virtualization and 
+    more traditional structuring (like a directed graph). Creation of 
+    specific, specialized nodes? A node that hooks into team or lobby 
+    objects to virtualize other players in a user's group? 
+    Per-node decision between virtualization and realization.
+    
+    
+    
+
+- (STRUCTURES) Help to move beyond toggleable potentially... Use a repeating queue 
+of appearances that can be given indices? Have the structure handle the 
+logic of appearance changes, but not the changes themselves.
+
+
+(PACKETS) A packet control engine?
+- Block all block updates/button presses/etc. that are not explicitly allowed?
+- What about using this in environments where those packets are necessary? 
+Should multiple 'modes' be implemented, or perhaps just use a totalitarian 
+system like blocking ALL natural block updates until we are better 
+acquainted with the mechanics and possibilities of packet editing, at which 
+point a more reserved system (something like per-block locking) 
+can be implemented?
+- Per-block locking? Register per-player "locks" on blocks/structures that
+prevent any natural block updates from being sent by just those blocks?
+
+
+
+
+Broad Todos (Frontend) - OUTDATED:
+- |Packet management engine. Mass blocking of block updates and/or per-block,
+  per-player locks to stop specific, menu-related packets.
+- Opening and closing of menus (Hook into Zama lobby events, press a 
+  button to open, etc.) as well as triggered auto-hiding.
+- -Implement SignFormat (Multilingually)
+- Make sign updates safer by making sure that the block is a sign or is a sign in the player's playervariance? Would require playervariance not to be one-use and to attempt to maintain a consistent view of the player's perspective. Potentially tie playervariance to a lobby, so that each lobby has a playervariance that can be refreshed when a player enters that lobby? No playervariances (at least the block kind, a separate kind for entities could exist) without being associated with a specific lobby.
+- Create a new model and configuration folder for objects that turn on/off menus (need better name) 
+	* Method of turning on (enter lobby, press button, etc.)
+	* Underlay to create a menu for
+	* User interface to display menu on
+	---
+	* What triggers the closing of the menu (logging out, leaving the lobby, opening a new menu)
+	* What to do (flush menu, hold and cache menu, etc.)
+	* Saving and restarting menus?
+	---
+	* Menu transfers to different interfaces? (button structure to button 
+	  structure in a new lobby, button structure to an item menu, etc.)
+
+
+
+
+
+----NON-MENU todos----
+
+implement asking for an argument for a player "Enter the player's name"
+implement isVersion() checking for a multilingualmessage, to do things like multi-lingual arguments and commands
+
+!(DESIGN) Packets
+	Make a separate packet engine library
+	Include PacketWrapper
+	Create different modes (locking, whitelist, etc.)
+	?How do whitelisted elements and locks expire?
+	Persisting (rather than one-use) variances to ensure packet safety.
+	?Safety settings? Methods that will only send an update if it is known to be safe?
+
+
+Lobbies (Areas)
+	Make Lobby library (develop logical model first)
+	Hook dialogues into library
+	What is the relation between Areas and GameMaps?

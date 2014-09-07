@@ -1,0 +1,6 @@
+name: Menus
+main: net.minedcontrol.bukkit.menus.MenusPlugin
+version: 0.01
+authors: [Brutus]
+depend: [ZamaLib]
+softdepend: [Zama, ProtocolLib]
